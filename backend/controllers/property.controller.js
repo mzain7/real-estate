@@ -106,7 +106,10 @@ export const getProperties = async (req, res, next) => {
       .sort({ [sort]: order })
       .limit(limit)
       .skip(startIndex);
-
+    res.set({
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+    });
     return res.status(200).json(properties);
   } catch (error) {
     next(error);
