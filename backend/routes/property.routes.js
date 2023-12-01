@@ -12,11 +12,11 @@ import { setOriginControl } from "../utils/setOriginControl.js";
 
 const router = express.Router();
 
-router.post("/create", verifyUser, createProperty);
-router.delete("/delete/:id", verifyUser, deleteProperty);
-router.post("/update/:id", verifyUser, updateProperty);
-router.get("/get/:id", getProperty);
+router.post("/create", verifyUser,setOriginControl, createProperty);
+router.delete("/delete/:id", verifyUser,setOriginControl, deleteProperty);
+router.post("/update/:id", verifyUser,setOriginControl, updateProperty);
+router.get("/get/:id",setOriginControl, getProperty);
 router.get("/get",setOriginControl, getProperties);
-router.get("/get-visited", getVisitedProperties);
+router.get("/get-visited",setOriginControl, getVisitedProperties);
 
 export default router;
