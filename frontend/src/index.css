@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html{
+    height: 100%;
+    background-color: white;
+}
+
+body{
+    height: 100%;
+}
+
+.react-multiple-carousel__arrow {
+    background: rgba(0, 0, 0, 0.8);
+}
