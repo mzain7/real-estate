@@ -5,6 +5,7 @@ import userRouter from "./routes/user.routes.js";
 import authRouter from "./routes/auth.routes.js";
 import propertyRouter from "./routes/property.routes.js";
 import cookieParser from "cookie-parser";
+import path from "path";
 
 dotenv.config();
 mongoose
@@ -35,6 +36,12 @@ app.use((req, res, next) => {
 app.use("/api/user", userRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/property", propertyRouter);
+
+const __dirname = path.resolve();
+app.use(express.static(path.join(__dirname, "/client/dist")));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "client", "dist", "index.html"));
+});
 
 app.use((err, req, res, next) => {
   const statusCode = err.status || 500;
