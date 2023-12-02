@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
+
 const responsive = {
   superLargeDesktop: {
     breakpoint: { max: 4000, min: 3000 },
@@ -10,19 +11,24 @@ const responsive = {
     partialVisibilityGutter: 30,
   },
   desktop: {
-    breakpoint: { max: 3000, min: 1024 },
+    breakpoint: { max: 3000, min: 1100 },
     items: 3,
     partialVisibilityGutter: 30,
   },
   tablet: {
-    breakpoint: { max: 1024, min: 464 },
+    breakpoint: { max: 1100, min: 768 },
     items: 2,
-    partialVisibilityGutter: 30,
+    partialVisibilityGutter: window.innerWidth / 5 - 100,
+  },
+  mobile1: {
+    breakpoint: { max: 768, min: 464 },
+    items: 1,
+    partialVisibilityGutter: window.innerWidth / 2 - 100,
   },
   mobile: {
     breakpoint: { max: 464, min: 0 },
     items: 1,
-    partialVisibilityGutter: 30,
+    partialVisibilityGutter: 20,
   },
 };
 export default function CarouselPropertyItems({
@@ -50,14 +56,13 @@ export default function CarouselPropertyItems({
           <Carousel
             responsive={responsive}
             showDots
-            containerClass="pb-8 pt-2"
+            containerClass="pb-8 pt-2 overflow-hidden"
             draggable
             keyBoardControl
             swipeable
-            slidesToSlide={2}
             arrows
             partialVisible
-            itemClass="mx-2"
+            itemClass=""
           >
             {properties.map((property) => (
               <PropertyItem property={property} key={property._id} />

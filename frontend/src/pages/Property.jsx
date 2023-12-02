@@ -233,7 +233,7 @@ export default function Property() {
             </div>
           </div>
           <hr />
-          <div className="mt-8 px-14">
+          <div className="mt-8 sm:px-14">
             <CarouselPropertyItems
               properties={similarProperties}
               title={`Similar Houses around ${property.address}`}
