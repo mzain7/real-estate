@@ -4,13 +4,13 @@ import react from '@vitejs/plugin-react'
 // https://vitejs.dev/config/
 export default defineConfig({
   server: {
-    proxy: {
-      '/api': {
-        target: 'https://gorgeous-pear-fly.cyclic.app/',
-        // secure: false,
-        changeOrigin: true,
-      }
-    },
+    // proxy: {
+    //   '/api': {
+    //     target: 'https://gorgeous-pear-fly.cyclic.app/',
+    //     // secure: false,
+    //     changeOrigin: true,
+    //   }
+    // },
   },
 
   plugins: [react()],
