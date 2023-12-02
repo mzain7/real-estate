@@ -141,7 +141,7 @@ export default function Search() {
     const urlParams = new URLSearchParams(location.search);
     urlParams.set("startIndex", startIndex);
     const searchQuery = urlParams.toString();
-    const res = await fetch(`https://gorgeous-pear-fly.cyclic.app/api/property/get?${searchQuery}`);
+    const res = await fetch(`/api/property/get?${searchQuery}`);
     const data = await res.json();
     if (data.length < 9) {
       setShowMore(false);

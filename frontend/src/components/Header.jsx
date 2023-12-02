@@ -18,7 +18,7 @@ export default function Header() {
   const handleSignout = async () => {
     try {
       googleLogout();
-      const res = await fetch(`https://gorgeous-pear-fly.cyclic.app/api/auth/logout`);
+      const res = await fetch(`/api/auth/logout`);
 
       const data = await res.json();
       if (data.error) {

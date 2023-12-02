@@ -131,7 +131,7 @@ export default function CreateProperty() {
       setLoading(true);
       setError(false);
       const imgUrls = await handleImageSubmit();
-      const res = await fetch("https://gorgeous-pear-fly.cyclic.app/api/property/create", {
+      const res = await fetch("/api/property/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

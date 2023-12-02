@@ -6,7 +6,7 @@ export default defineConfig({
   server: {
     // proxy: {
     //   '/api': {
-    //     target: 'https://gorgeous-pear-fly.cyclic.app/',
+    //     target: '/',
     //     // secure: false,
     //     changeOrigin: true,
     //   }

@@ -5,13 +5,12 @@ import {
   google,
   logout,
 } from "../controllers/auth.controller.js";
-import { setOriginControl } from "../utils/setOriginControl.js";
 
 const router = express.Router();
 
-router.post("/signup", setOriginControl, signup);
-router.post("/login", setOriginControl, login);
-router.post("/google", setOriginControl, google);
-router.get("/logout", setOriginControl, logout);
+router.post("/signup", signup);
+router.post("/login", login);
+router.post("/google", google);
+router.get("/logout", logout);
 
 export default router;

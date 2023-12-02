@@ -29,7 +29,7 @@ export default function CreateProperty() {
   useEffect(() => {
     const fetchProperty = async () => {
       const propertyId = params.propertyId;
-      const res = await fetch(`https://gorgeous-pear-fly.cyclic.app/api/property/get/${propertyId}`);
+      const res = await fetch(`/api/property/get/${propertyId}`);
       const data = await res.json();
       if (data.success === false) {
         console.log(data.message);
@@ -132,7 +132,7 @@ export default function CreateProperty() {
         return setError("Discount price must be lower than regular price");
       setLoading(true);
       setError(false);
-      const res = await fetch(`https://gorgeous-pear-fly.cyclic.app/api/property/update/${params.propertyId}`, {
+      const res = await fetch(`/api/property/update/${params.propertyId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

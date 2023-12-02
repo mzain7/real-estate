@@ -6,13 +6,12 @@ import {
   getUserDetails,
 } from "../controllers/user.controller.js";
 import { verifyUser } from "../utils/verifyUser.js";
-import { setOriginControl } from "../utils/setOriginControl.js";
 
 const router = express.Router();
 
-router.post("/update/:id", verifyUser, setOriginControl, updateUser);
-router.delete("/delete/:id", verifyUser, setOriginControl, deleteUser);
-router.get("/properties/:id", verifyUser, setOriginControl, getUserProperties);
-router.get("/details/:id", setOriginControl, getUserDetails);
+router.post("/update/:id", verifyUser, updateUser);
+router.delete("/delete/:id", verifyUser, deleteUser);
+router.get("/properties/:id", verifyUser, getUserProperties);
+router.get("/details/:id", getUserDetails);
 
 export default router;

@@ -14,7 +14,7 @@ export default function Home() {
   useEffect(() => {
     const fetchOfferProperties = async () => {
       try {
-        const res = await fetch("https://gorgeous-pear-fly.cyclic.app/api/property/get?offer=true&limit=10");
+        const res = await fetch("/api/property/get?offer=true&limit=10");
         const data = await res.json();
         setOfferProperties(data);
         fetchRentProperties();
@@ -24,7 +24,7 @@ export default function Home() {
     };
     const fetchRentProperties = async () => {
       try {
-        const res = await fetch("https://gorgeous-pear-fly.cyclic.app/api/property/get?type=rent&limit=10");
+        const res = await fetch("/api/property/get?type=rent&limit=10");
         const data = await res.json();
         setRentProperties(data);
         fetchSaleProperties();
@@ -35,7 +35,7 @@ export default function Home() {
 
     const fetchSaleProperties = async () => {
       try {
-        const res = await fetch("https://gorgeous-pear-fly.cyclic.app/api/property/get?type=sale&limit=10");
+        const res = await fetch("/api/property/get?type=sale&limit=10");
         const data = await res.json();
         setSaleProperties(data);
         fetchVisitedProperties();
@@ -50,7 +50,7 @@ export default function Home() {
       if (!listOfVisitedProperties) return;
       try {
         const res = await fetch(
-          `https://gorgeous-pear-fly.cyclic.app/api/property/get-visited?ids=${listOfVisitedProperties.join(",")}`
+          `/api/property/get-visited?ids=${listOfVisitedProperties.join(",")}`
         );
         const data = await res.json();
         console.log(data);

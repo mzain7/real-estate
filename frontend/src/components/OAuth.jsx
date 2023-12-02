@@ -10,7 +10,7 @@ export default function OAuth() {
   const dispatch = useDispatch();
   const responseMessage = async (data) => {
     data = jwt_decode(data.credential);
-    const res = await fetch("https://gorgeous-pear-fly.cyclic.app/api/auth/google", {
+    const res = await fetch("/api/auth/google", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

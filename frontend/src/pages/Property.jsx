@@ -43,7 +43,7 @@ export default function Property() {
     const fetchProperty = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`https://gorgeous-pear-fly.cyclic.app/api/property/get/${params.id}`);
+        const res = await fetch(`/api/property/get/${params.id}`);
         const data = await res.json();
         if (data.success === false) {
           setError(true);
@@ -62,7 +62,7 @@ export default function Property() {
 
     const fetchOnwerDetails = async (onwerId) => {
       try {
-        const res = await fetch(`https://gorgeous-pear-fly.cyclic.app/api/user/details/${onwerId}`);
+        const res = await fetch(`/api/user/details/${onwerId}`);
         const data = await res.json();
         setOwnerDetails(data);
         console.log(data);
@@ -77,7 +77,7 @@ export default function Property() {
 
     const fetchSimilarProperties = async () => {
       try {
-        const res = await fetch("https://gorgeous-pear-fly.cyclic.app/api/property/get");
+        const res = await fetch("/api/property/get");
         const data = await res.json();
         setSimilarProperties(data);
       } catch (error) {
