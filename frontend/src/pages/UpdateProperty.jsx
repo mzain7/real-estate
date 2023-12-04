@@ -1,12 +1,27 @@
+import Carousel from "react-multi-carousel";
+import "react-multi-carousel/lib/styles.css";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
+import ReactSelect from "react-select";
+import { MdDelete } from "react-icons/md";
+
+const amenitiesOptions = [
+  { value: "parking", label: "Parking" },
+  { value: "furnished", label: "Furnished" },
+];
+const responsive = {
+  all: {
+    breakpoint: { max: 4000, min: 0 },
+    items: 1,
+  },
+};
 
 export default function CreateProperty() {
   const { currentUser } = useSelector((state) => state.user);
   const navigate = useNavigate();
-  const params = useParams();
   const [files, setFiles] = useState([]);
+  const [imageUrls, setImageUrls] = useState([]);
   const [formData, setFormData] = useState({
     imageUrls: [],
     name: "",
@@ -25,12 +40,15 @@ export default function CreateProperty() {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
+  const params = useParams();
 
   useEffect(() => {
     const fetchProperty = async () => {
       const propertyId = params.propertyId;
+      if (!propertyId) return;
       const res = await fetch(`/api/property/get/${propertyId}`);
       const data = await res.json();
+      console.log(data);
       if (data.success === false) {
         console.log(data.message);
         return;
@@ -41,8 +59,20 @@ export default function CreateProperty() {
     fetchProperty();
   }, [params.propertyId]);
 
-  const handleImageSubmit = () => {
-    if (files.length > 0 && files.length + formData.imageUrls.length < 7) {
+  useEffect(() => {
+    const newImageUrls = [...formData.imageUrls];
+    for (let i = 0; i < files.length; i++) {
+      newImageUrls.push(URL.createObjectURL(files[i]));
+    }
+    setImageUrls(newImageUrls);
+  }, [files, formData.imageUrls]);
+
+  const handleFileChange = (e) => {
+    setFiles([...files, ...e.target.files]);
+  };
+
+  const handleImageSubmit = async () => {
+    if (files.length > 0 && files.length < 7) {
       setUploading(true);
       setImageUploadError(false);
       const promises = [];
@@ -50,19 +80,15 @@ export default function CreateProperty() {
       for (let i = 0; i < files.length; i++) {
         promises.push(storeImage(files[i]));
       }
-      Promise.all(promises)
-        .then((urls) => {
-          setFormData({
-            ...formData,
-            imageUrls: formData.imageUrls.concat(urls),
-          });
-          setImageUploadError(false);
-          setUploading(false);
-        })
-        .catch(() => {
-          setImageUploadError("Image upload failed (2 mb max per image)");
-          setUploading(false);
-        });
+      try {
+        const urls = await Promise.all(promises);
+        setImageUploadError(false);
+        setUploading(false);
+        return urls;
+      } catch (err) {
+        setImageUploadError("Image upload failed (2 mb max per image)");
+        setUploading(false);
+      }
     } else {
       setImageUploadError("You can only upload 6 images per property");
       setUploading(false);
@@ -73,7 +99,7 @@ export default function CreateProperty() {
     return new Promise((resolve, reject) => {
       const data = new FormData();
       data.append("file", file);
-      data.append("upload_preset", "PropertyPictures");
+      data.append("upload_preset", "ProfilePictures");
       data.append("cloud_name", "dhk5vhnp4");
       fetch("https://api.cloudinary.com/v1_1/dhk5vhnp4/image/upload", {
         method: "POST",
@@ -85,26 +111,25 @@ export default function CreateProperty() {
     });
   };
 
-  const handleRemoveImage = (index) => {
-    setFormData({
-      ...formData,
-      imageUrls: formData.imageUrls.filter((_, i) => i !== index),
-    });
+  const handleRemoveImage = (index, url) => {
+    console.log(index);
+    if (formData.imageUrls.includes(url)) {
+      setFormData({
+        ...formData,
+        imageUrls: formData.imageUrls.filter((urls) => urls !== url),
+      });
+      setImageUrls(imageUrls.filter((_, i) => i !== index));
+    } else {
+      setFiles(files.filter((_, i) => i + formData.imageUrls.length !== index));
+    }
   };
 
   const handleChange = (e) => {
-    if (e.target.id === "sale" || e.target.id === "rent") {
-      setFormData({
-        ...formData,
-        type: e.target.id,
-      });
+    if (e.target.id === "type") {
+      setFormData({ ...formData, type: e.target.value });
     }
 
-    if (
-      e.target.id === "parking" ||
-      e.target.id === "furnished" ||
-      e.target.id === "offer"
-    ) {
+    if (e.target.id === "offer") {
       setFormData({
         ...formData,
         [e.target.id]: e.target.checked,
@@ -126,12 +151,13 @@ export default function CreateProperty() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (formData.imageUrls.length < 1)
-        return setError("You must upload at least one image");
+      if (imageUrls.length > 6)
+        return setError("You can only upload 6 images per property");
       if (+formData.regularPrice < +formData.discountPrice)
         return setError("Discount price must be lower than regular price");
       setLoading(true);
       setError(false);
+      const imgUrls = await handleImageSubmit();
       const res = await fetch(`/api/property/update/${params.propertyId}`, {
         method: "POST",
         headers: {
@@ -139,6 +165,7 @@ export default function CreateProperty() {
         },
         body: JSON.stringify({
           ...formData,
+          imageUrls: [...formData.imageUrls, ...imgUrls],
           userRef: currentUser._id,
         }),
       });
@@ -147,16 +174,33 @@ export default function CreateProperty() {
       if (data.success === false) {
         setError(data.message);
       }
+      console.log(data);
       navigate(`/property/${data._id}`);
     } catch (error) {
       setError(error.message);
       setLoading(false);
     }
   };
+  const handleAmenitiesChange = (e) => {
+    console.log(e);
+    amenitiesOptions.forEach((element) => {
+      console.log(element.value);
+      console.log(e.find(({ value }) => value == element.value) ? true : false);
+      setFormData({
+        ...formData,
+        [element.value]: e.find(({ value }) => value == element.value)
+          ? true
+          : false,
+      });
+    });
+  };
+  console.log(formData);
+  console.log(imageUrls);
+  console.log(files);
   return (
     <main className="p-3 max-w-4xl mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7">
-        Update a Property
+        Create a Property
       </h1>
       <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4">
         <div className="flex flex-col gap-4 flex-1">
@@ -190,45 +234,29 @@ export default function CreateProperty() {
             value={formData.address}
           />
           <div className="flex gap-6 flex-wrap">
-            <div className="flex gap-2">
-              <input
-                type="checkbox"
-                id="sale"
-                className="w-5"
+            <div className="flex items-center gap-2">
+              <label className="font-semibold">Type:</label>
+              <select
                 onChange={handleChange}
-                checked={formData.type === "sale"}
-              />
-              <span>Sell</span>
+                defaultValue={"rent"}
+                id="type"
+                className="border rounded-lg p-3"
+              >
+                <option value="rent">Rent</option>
+                <option value="sale">Sale</option>
+              </select>
             </div>
-            <div className="flex gap-2">
-              <input
-                type="checkbox"
-                id="rent"
-                className="w-5"
-                onChange={handleChange}
-                checked={formData.type === "rent"}
+            <div className="flex items-center gap-2">
+              <label className="font-semibold">Amenities:</label>
+              <ReactSelect
+                id="amenities"
+                className="max-w-[400px] min-w-[200px]"
+                options={amenitiesOptions}
+                isMulti
+                closeMenuOnSelect={false}
+                hideSelectedOptions={false}
+                onChange={handleAmenitiesChange}
               />
-              <span>Rent</span>
-            </div>
-            <div className="flex gap-2">
-              <input
-                type="checkbox"
-                id="parking"
-                className="w-5"
-                onChange={handleChange}
-                checked={formData.parking}
-              />
-              <span>Parking spot</span>
-            </div>
-            <div className="flex gap-2">
-              <input
-                type="checkbox"
-                id="furnished"
-                className="w-5"
-                onChange={handleChange}
-                checked={formData.furnished}
-              />
-              <span>Furnished</span>
             </div>
             <div className="flex gap-2">
               <input
@@ -238,7 +266,9 @@ export default function CreateProperty() {
                 onChange={handleChange}
                 checked={formData.offer}
               />
-              <span>Offer</span>
+              <label htmlFor="offer" className="self-center">
+                Offer
+              </label>
             </div>
           </div>
           <div className="flex flex-wrap gap-6">
@@ -300,6 +330,7 @@ export default function CreateProperty() {
                 />
                 <div className="flex flex-col items-center">
                   <p>Discounted price</p>
+
                   {formData.type === "rent" && (
                     <span className="text-xs">($ / month)</span>
                   )}
@@ -308,7 +339,7 @@ export default function CreateProperty() {
             )}
           </div>
         </div>
-        <div className="flex flex-col flex-1 gap-4">
+        <div className="flex flex-col flex-1 gap-4 sm:w-1/2">
           <p className="font-semibold">
             Images:
             <span className="font-normal text-gray-600 ml-2">
@@ -316,51 +347,49 @@ export default function CreateProperty() {
             </span>
           </p>
           <div className="flex gap-4">
-            <input
-              onChange={(e) => setFiles(e.target.files)}
-              className="p-3 border border-gray-300 rounded w-full"
-              type="file"
-              id="images"
-              accept="image/*"
-              multiple
-            />
-            <button
-              type="button"
-              disabled={uploading}
-              onClick={handleImageSubmit}
+            <label
+              htmlFor="images"
               className="p-3 text-green-700 border border-green-700 rounded uppercase hover:shadow-lg disabled:opacity-80"
             >
-              {uploading ? "Uploading..." : "Upload"}
-            </button>
+              <input
+                onChange={handleFileChange}
+                type="file"
+                className="hidden"
+                id="images"
+                accept="image/*"
+                multiple
+              />
+              {uploading ? "Uploading..." : "Add Images"}
+            </label>
           </div>
           <p className="text-red-700 text-sm">
             {imageUploadError && imageUploadError}
           </p>
-          {formData.imageUrls.length > 0 &&
-            formData.imageUrls.map((url, index) => (
-              <div
-                key={url}
-                className="flex justify-between p-3 border items-center"
-              >
-                <img
-                  src={url}
-                  alt="property image"
-                  className="w-20 h-20 object-contain rounded-lg"
-                />
-                <button
-                  type="button"
-                  onClick={() => handleRemoveImage(index)}
-                  className="p-3 text-red-700 rounded-lg uppercase hover:opacity-75"
-                >
-                  Delete
-                </button>
-              </div>
-            ))}
+          {imageUrls.length > 0 && (
+            <div className="w-full">
+              <Carousel responsive={responsive} showDots containerClass="pb-3">
+                {imageUrls.map((url, index) => (
+                  <div key={index} className="w-full">
+                    <img
+                      src={url}
+                      alt=""
+                      className="h-[230px] w-full rounded-3xl overflow-hidden object-cover"
+                    />
+                    <MdDelete
+                      onClick={() => handleRemoveImage(index, url)}
+                      className=" text-2xl absolute cursor-pointer right-1 bottom-1 bg-red-600 text-white rounded-full p-1"
+                      size={40}
+                    />
+                  </div>
+                ))}
+              </Carousel>
+            </div>
+          )}
           <button
             disabled={loading || uploading}
-            className="p-3 bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
+            className="p-3 bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 hover:shadow-lg disabled:opacity-80"
           >
-            {loading ? "Updating..." : "Update property"}
+            {loading ? "Updating..." : "Update Property"}
           </button>
           {error && <p className="text-red-700 text-sm">{error}</p>}
         </div>
