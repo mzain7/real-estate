@@ -3,8 +3,9 @@ import { Link } from "react-router-dom";
 
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
+import { useEffect, useState } from "react";
 
-const responsive = {
+var responsive = {
   superLargeDesktop: {
     breakpoint: { max: 4000, min: 3000 },
     items: 5,
@@ -37,6 +38,33 @@ export default function CarouselPropertyItems({
   linkText,
   linkTo,
 }) {
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  useEffect(() => {
+    const updatePartialVisibilityGutter = () => {
+      const updatedResponsive = { ...responsive };
+      updatedResponsive.tablet.partialVisibilityGutter =
+        windowWidth / 5 - 100;
+      updatedResponsive.mobile1.partialVisibilityGutter =
+        windowWidth / 2 - 100;
+      responsive = updatedResponsive;
+    };
+
+    updatePartialVisibilityGutter();
+  }, [windowWidth]);
+
   return (
     <>
       {properties && properties.length > 0 && (
