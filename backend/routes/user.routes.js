@@ -9,9 +9,9 @@ import { verifyUser } from "../utils/verifyUser.js";
 
 const router = express.Router();
 
-router.post("/update/:id", verifyUser, updateUser);
-router.delete("/delete/:id", verifyUser, deleteUser);
+router.put("/:id", verifyUser, updateUser);
+router.delete("/:id", verifyUser, deleteUser);
+router.get("/:id", getUserDetails);
 router.get("/properties/:id", verifyUser, getUserProperties);
-router.get("/details/:id", getUserDetails);
 
 export default router;

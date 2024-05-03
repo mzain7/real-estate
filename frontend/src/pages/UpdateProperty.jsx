@@ -46,7 +46,7 @@ export default function CreateProperty() {
     const fetchProperty = async () => {
       const propertyId = params.propertyId;
       if (!propertyId) return;
-      const res = await fetch(`/api/property/get/${propertyId}`);
+      const res = await fetch(`/api/property/${propertyId}`);
       const data = await res.json();
       console.log(data);
       if (data.success === false) {
@@ -158,8 +158,8 @@ export default function CreateProperty() {
       setLoading(true);
       setError(false);
       const imgUrls = await handleImageSubmit();
-      const res = await fetch(`/api/property/update/${params.propertyId}`, {
-        method: "POST",
+      const res = await fetch(`/api/property/${params.propertyId}`, {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },

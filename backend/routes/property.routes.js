@@ -11,11 +11,11 @@ import {
 
 const router = express.Router();
 
-router.post("/create", verifyUser, createProperty);
-router.delete("/delete/:id", verifyUser, deleteProperty);
-router.post("/update/:id", verifyUser, updateProperty);
-router.get("/get/:id", getProperty);
-router.get("/get", getProperties);
+router.post("/", verifyUser, createProperty);
+router.delete("/:id", verifyUser, deleteProperty);
+router.put("/:id", verifyUser, updateProperty);
+router.get("/:id", getProperty);
+router.get("/", getProperties);
 router.get("/get-visited", getVisitedProperties);
 
 export default router;

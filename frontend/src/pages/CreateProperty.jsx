@@ -131,7 +131,7 @@ export default function CreateProperty() {
       setLoading(true);
       setError(false);
       const imgUrls = await handleImageSubmit();
-      const res = await fetch("/api/property/create", {
+      const res = await fetch("/api/property", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

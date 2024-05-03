@@ -14,7 +14,7 @@ export default function Home() {
   useEffect(() => {
     const fetchOfferProperties = async () => {
       try {
-        const res = await fetch("/api/property/get?offer=true&limit=10");
+        const res = await fetch("/api/property?offer=true&limit=10");
         const data = await res.json();
         setOfferProperties(data);
         fetchRentProperties();
@@ -24,7 +24,7 @@ export default function Home() {
     };
     const fetchRentProperties = async () => {
       try {
-        const res = await fetch("/api/property/get?type=rent&limit=10");
+        const res = await fetch("/api/property?type=rent&limit=10");
         const data = await res.json();
         setRentProperties(data);
         fetchSaleProperties();
@@ -35,7 +35,7 @@ export default function Home() {
 
     const fetchSaleProperties = async () => {
       try {
-        const res = await fetch("/api/property/get?type=sale&limit=10");
+        const res = await fetch("/api/property?type=sale&limit=10");
         const data = await res.json();
         setSaleProperties(data);
         fetchVisitedProperties();

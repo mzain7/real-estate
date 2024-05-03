@@ -61,7 +61,7 @@ export default function Search() {
       setShowMore(false);
       const searchQuery = urlParams.toString();
       const res = await fetch(
-        `api/property/get?${searchQuery}`,
+        `api/property?${searchQuery}`,
       );
       console.log(res);
       const data = await res.json();
@@ -141,7 +141,7 @@ export default function Search() {
     const urlParams = new URLSearchParams(location.search);
     urlParams.set("startIndex", startIndex);
     const searchQuery = urlParams.toString();
-    const res = await fetch(`/api/property/get?${searchQuery}`);
+    const res = await fetch(`/api/property?${searchQuery}`);
     const data = await res.json();
     if (data.length < 9) {
       setShowMore(false);

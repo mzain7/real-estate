@@ -79,8 +79,8 @@ export default function Profile() {
     e.preventDefault();
     try {
       dispatch(updateUserStart());
-      const res = await fetch(`/api/user/update/${currentUser._id}`, {
-        method: "POST",
+      const res = await fetch(`/api/user/${currentUser._id}`, {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
@@ -100,7 +100,7 @@ export default function Profile() {
 
   const handleDeleteUser = async () => {
     try {
-      const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+      const res = await fetch(`/api/user/${currentUser._id}`, {
         method: "DELETE",
       });
 
@@ -149,7 +149,7 @@ export default function Profile() {
   };
   const handlePropertyDelete = async (propertyId) => {
     try {
-      const res = await fetch(`/api/property/delete/${propertyId}`, {
+      const res = await fetch(`/api/property/${propertyId}`, {
         method: "DELETE",
       });
       const data = await res.json();
