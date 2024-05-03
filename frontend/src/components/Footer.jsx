@@ -71,7 +71,7 @@ export default function Footer() {
               </a>
               <a
                 className="inline-block hover:shadow-lg rounded-full"
-                href="https://www.github.com/mzain7"
+                href="https://github.com/mzain7/real-estate"
                 target="_blank"
                 rel="noreferrer"
               >
